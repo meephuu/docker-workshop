@@ -26,6 +26,12 @@ FROM node:20-slim
 
 WORKDIR /app
 
+# Patch OS packages with available security fixes, and drop npm (not needed at runtime;
+# its bundled tar triggers a CRITICAL Trivy finding).
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/* /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+
 # TODO(step-4e): copy the fully-installed app from the builder stage.
 COPY --from=builder /app /app
 
